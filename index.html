@@ -1,0 +1,181 @@
+<!--
+* Basic Genetic algorithm
+* JS/ES6
+*
+* by @clemsos, with the help of Nature of Code
+-->
+
+<button onclick="start()">START</button>
+<button onclick="stop()">STOP</button>
+<button onclick="init()">INIT</button>
+
+<p>
+  <b><span id="target"></span></b>
+  </br>
+  <span id="best"></span>
+  <ul>
+    <li>
+      mutation rate : <span id="mutationRate"></span>
+    </li>
+    <li>
+      average fitness: <span id="avgFitness"></span>
+    </li>
+    <li>
+      total population: <span id="maxPop"></span>
+    </li>
+    <li>
+      total generations : <span id="counter"></span>
+    </li>
+  </ul>
+
+</p>
+<div id="genetic"></div>
+<script>
+
+// 1. initialize
+const MUTATION_RATE = 0.01,
+  SPEED = 100
+
+document.getElementById("mutationRate").innerHTML = MUTATION_RATE*100 + "%"
+
+var target = "how happy days",
+  popMax = 150,
+  timer,
+  i,
+  mutants = getInitialPopulation(target);
+
+// show target
+document.getElementById("target").innerHTML = target;
+
+init(target)
+start()
+
+// population of random elements
+function init(target) {
+  mutants = getInitialPopulation(target);
+  i = 0;
+}
+
+function start () {
+  timer = setInterval(() => {
+    draw()
+  }, SPEED);
+}
+
+function stop() {
+  clearInterval(timer)
+}
+
+function draw() {
+  mutants = newGeneration(mutants)
+  if (mutants.indexOf(target) !== -1) stop()
+}
+
+function getInitialPopulation(target) {
+  return [...new Array(popMax)]
+    .map( d =>
+      Array(Math.floor(Math.random() * target.length)+1) // random length
+      .fill("a")
+      .map( d => getRandomLetter() )
+      .join("")
+    )
+}
+
+function newGeneration(population) {
+  let matePool = []
+
+  let fitness = population.map(e => calcFitness(e, target) )
+  let avgFitness = fitness.reduce((a, b) => a + b ) / fitness.length
+  let best = getBest(fitness)
+
+  let maxFitness = Math.max.apply(null, fitness);
+
+  // 2. selection
+  population
+    .forEach( (e, i) =>  {
+      // - evaluate fitness of each element
+      let fit = map(fitness[i],0,maxFitness,0,0.1);
+      let pool = Array(Math.floor(fit*100)).fill(e)
+      matePool = [ ...matePool, ...pool]
+    })
+
+  let mutants = population.map((a) => {
+    // - pick two parents
+    let i = Math.floor(Math.random()*matePool.length);
+    let j = Math.floor(Math.random()*matePool.length);
+
+    // - crossover (create a child by combining DNA)
+    let child = crossover(matePool[j],matePool[j])
+
+    // - mutation (mutate the child based on a given probability)
+    let mutant = mutate(child)
+
+    // - add the new child to the population
+    return mutant
+  })
+
+  let bestMutant = getBest(mutants.map(e => calcFitness(e, target)) )
+  show(mutants, i++, avgFitness, mutants[bestMutant])
+
+  return mutants
+}
+
+function getBest(fitness){
+  return fitness.indexOf(Math.max(...fitness));
+}
+
+function calcFitness (source, target) {
+  let score = 0;
+
+  source.split("").forEach( (letter, i) => 
+    target[i] === letter ? score ++ : null
+  )
+  return score / target.split("").length;
+}
+console.assert(calcFitness("love", "love") === 1)
+console.assert(calcFitness("1ove", "love") === .75)
+
+function crossover(a,b) {
+  let len = target.split("").length;
+  let midpoint = Math.floor(Math.random()*len) // Pick a midpoint
+
+  // Half from one, half from the other
+  let child  = a.split("").slice(0,midpoint).join("")
+    + b.split("").slice(midpoint,len).join("")
+
+  console.log(child.length)
+  return child
+}
+
+function map (num, in_min, in_max, out_min, out_max) {
+  return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+// Based on a mutation probability, picks a new random character
+function mutate(child) {
+ return child
+   .split("")
+   .map( letter =>
+    Math.random() < MUTATION_RATE
+    ?
+    getRandomLetter()
+    :
+    letter
+   )
+   .join("")
+}
+
+function getRandomLetter() {
+  return " abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)]
+}
+
+
+function show(population, i, avgFitness, best) {
+  var li = population.map(d => "<li>" + d + "</li>").join("")
+  document.getElementById("genetic").innerHTML = "<ul style='columns: 4'>"+li+"</ul>"
+  document.getElementById("counter").innerHTML = i + " generations"
+  document.getElementById("avgFitness").innerHTML = Math.round(avgFitness*100)/100
+  document.getElementById("best").innerHTML = best
+  document.getElementById("maxPop").innerHTML = population.length
+}
+</script>
