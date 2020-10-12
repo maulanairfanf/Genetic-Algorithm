@@ -1,94 +1,59 @@
-var Gene = function(code) {
-  if (code) this.code = code;
-  this.cost = 9999;
-};
-Gene.prototype.code = '';
-Gene.prototype.random = function(length) {
-  while (length--) {
-      this.code += String.fromCharCode(Math.floor(Math.random() * 255));
+function random(x){ //random math chromosom
+	let chromosom = [];
+	for(let i = 0; i < x; i++){
+		chromosom.push(Math.round(Math.random()))
   }
-};
-Gene.prototype.mutate = function(chance) {
-  if (Math.random() > chance) return;
-
-  var index = Math.floor(Math.random() * this.code.length);
-  var upOrDown = Math.random() <= 0.5 ? -1 : 1;
-  var newChar = String.fromCharCode(this.code.charCodeAt(index) + upOrDown);
-  var newString = '';
-  for (i = 0; i < this.code.length; i++) {
-      if (i == index) newString += newChar;
-      else newString += this.code[i];
-  }
-
-  this.code = newString;
-
-};
-Gene.prototype.mate = function(gene) {
-  var pivot = Math.round(this.code.length / 2) - 1;
-
-  var child1 = this.code.substr(0, pivot) + gene.code.substr(pivot);
-  var child2 = gene.code.substr(0, pivot) + this.code.substr(pivot);
-
-  return [new Gene(child1), new Gene(child2)];
-};
-Gene.prototype.calcCost = function(compareTo) {
-  var total = 0;
-  for (i = 0; i < this.code.length; i++) {
-      total += (this.code.charCodeAt(i) - compareTo.charCodeAt(i)) * (this.code.charCodeAt(i) - compareTo.charCodeAt(i));
-  }
-  this.cost = total;
-};
-var Population = function(goal, size) {
-  this.members = [];
-  this.goal = goal;
-  this.generationNumber = 0;
-  while (size--) {
-      var gene = new Gene();
-      gene.random(this.goal.length);
-      this.members.push(gene);
-  }
-};
-Population.prototype.display = function() {
-  document.body.innerHTML = '';
-  document.body.innerHTML += ("<h2>Generation: " + this.generationNumber + "</h2>");
-  document.body.innerHTML += ("<ul>");
-  for (var i = 0; i < this.members.length; i++) {
-      document.body.innerHTML += ("<li>" + this.members[i].code + " (" + this.members[i].cost + ")");
-  }
-  document.body.innerHTML += ("</ul>");
-};
-Population.prototype.sort = function() {
-  this.members.sort(function(a, b) {
-      return a.cost - b.cost;
-  });
+  return chromosom;
+  // console.log(chromosom)
 }
-Population.prototype.generation = function() {
-  for (var i = 0; i < this.members.length; i++) {
-      this.members[i].calcCost(this.goal);
 
+function initialPopulasi(x){ //random populasi
+  let populasi = []
+  for(let i = 0; i < x; i++){
+    populasi.push(random(4))
+  }
+  console.log(populasi);
+}
+
+function binaryToReal(rMin,rMax,x){
+  let total = 0;
+  for(let i = 1; i <= x.length ; i++){
+    total += Math.pow(2,-i)
   }
 
-  this.sort();
-  this.display();
-  var children = this.members[0].mate(this.members[1]);
-  this.members.splice(this.members.length - 2, 2, children[0], children[1]);
-
-  for (var i = 0; i < this.members.length; i++) {
-      this.members[i].mutate(0.5);
-      this.members[i].calcCost(this.goal);
-      if (this.members[i].code == this.goal) {
-          this.sort();
-          this.display();
-          return true;
-      }
+  let kanan = 0;
+  for(let i = 1 ; i <= x.length ; i++){
+    kanan += x[i-1] * Math.pow(2,-i)
   }
-  this.generationNumber++;
-  var scope = this;
-  setTimeout(function() {
-      scope.generation();
-  }, 20);
-};
 
+  return rMin + (rMax - rMin) / total *(kanan)
+}
 
-var population = new Population("Hello, world!", 20);
-population.generation();
+function decode(x){
+  let x1 = x.slice(0, x.length/2);
+  console.log(x1)
+  let x2 = x.slice(x.length/2, x.length);
+  console.log(x2)
+  console.log("x1 : " + binaryToReal(-1,2,x1))
+  console.log("x2 : " + binaryToReal(-1,1,x2))
+  x1 = binaryToReal(-1,2,x1)
+  x2 = binaryToReal(-1,1,x2)
+  return {x1,x2}
+}
+
+console.log(decode(random(6)))
+
+// decode(random(6))
+
+// initialPopulasi(5)
+
+function fungsiH(x1,x2){
+  return (Math.cos(x1)*Math.sin(x2)) - (x1/(Math.pow(x2,2) + 1))
+
+}
+
+const main = () =>{
+  let test = new fungsiH(2,3);
+}
+
+main();
