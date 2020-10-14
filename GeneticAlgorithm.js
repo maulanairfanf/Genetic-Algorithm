@@ -30,10 +30,10 @@ function binaryEncoding(rMin,rMax,x){ //implementasi rumus binary encoding
 
 function decode(x){ //implementasi decode 3 to 1 dan memecah array menjadi x1 dan x2
   let x1 = x.slice(0, x.length/2);
-  console.log("[ "+x1+" ] => " + "x1 : " + binaryEncoding(-1,2,x1))
+  // console.log("[ "+x1+" ] => " + "x1 : " + binaryEncoding(-1,2,x1))
   let x2 = x.slice(x.length/2, x.length);
-  console.log("[ "+x2+" ] => " + "x2 : " + binaryEncoding(-1,1,x2))
-  console.log(" ")
+  // console.log("[ "+x2+" ] => " + "x2 : " + binaryEncoding(-1,1,x2))
+  // console.log(" ")
   x1 = binaryEncoding(-1,2,x1)
   x2 = binaryEncoding(-1,1,x2)
   let temp = []
@@ -98,27 +98,27 @@ function crossOVer(roulette1,roulette2,change){
   let child2 = roulette2 ;
   let ganti = Math.random() 
   if (ganti <= change){ //terjadi persilangan di antara parent
-    console.log("terjadi persilangan")
-    console.log(" ")
+    // console.log("terjadi persilangan")
+    // console.log(" ")
 
-    console.log("pointer : " + pointer )
-    console.log(" ")
+    // console.log("pointer : " + pointer )
+    // console.log(" ")
 
     let parent1Slide1 = roulette1.slice(0,pointer)
-    console.log("parent 1 slide 1 : " + parent1Slide1)
-    console.log(" ")
+    // console.log("parent 1 slide 1 : " + parent1Slide1)
+    // console.log(" ")
 
     let parent1Slide2 = roulette1.slice(pointer,roulette1.length)
-    console.log("parent 1 slide 2 : " + parent1Slide2)
-    console.log(" ")
+    // console.log("parent 1 slide 2 : " + parent1Slide2)
+    // console.log(" ")
 
     let parent2Slide1 = roulette2.slice(0,pointer)
-    console.log("parent 2 slide 1 : " + parent2Slide1)
-    console.log(" ")
+    // console.log("parent 2 slide 1 : " + parent2Slide1)
+    // console.log(" ")
 
     let parent2Slide2 = roulette2.slice(pointer,roulette1.length)
-    console.log("parent 2 slide 2 : " + parent2Slide2)
-    console.log(" ")
+    // console.log("parent 2 slide 2 : " + parent2Slide2)
+    // console.log(" ")
 
     child1 = parent1Slide1.concat(parent2Slide2);
     child2 = parent2Slide1.concat(parent1Slide2);
@@ -126,8 +126,8 @@ function crossOVer(roulette1,roulette2,change){
   let temp = []
   temp.push(child1)
   temp.push(child2)
-  console.log("Hasil Persilangan : ")
-  console.log(" ")
+  // console.log("Hasil Persilangan : ")
+  // console.log(" ")
   return temp
 }
 
@@ -154,23 +154,31 @@ function mutation(child1,child2,probMut){
 }
 
 function sorting(populasi,fitness,afterDecode){
-  let gabungan = [populasi,fitness,afterDecode]
-  let fitnessSort = [];
-  for(let i = 0; i < fitness.length ; i++){
-    console.log(fitness[i])
-    for( let j = i + 1 ; j < fitness.length ; j++){
-      if(fitness[j] < fitness[i]){
-        let min = fitness[j]
-        fitness[i] = fitness[j];
-        fitnessSort.push(fitness[i])
-      }
-    }
+  let gabungan = []
+
+  for (let i = 0; i < populasi.length; i++) {
+		gabungan.push([populasi[i], fitness[i], afterDecode[i]]);
   }
-  // fitness.sort()
-  console.log(fitnessSort)
   
+  const compareSecondColumn = (a, b) => {
+		if (a[1] === b[1]) {
+			return 0;
+		} else {
+			return a[1] < b[1] ? -1 : 1;
+		}
+  };
+  
+  gabungan.sort(compareSecondColumn);
+  return gabungan
 }
 
+function replacement(child1,child2,sorting) {
+  let Sorting = sorting
+  Sorting[0][0] = child1
+  Sorting[1][0] = child2
+ 
+  return Sorting 
+}
 
 // console.log(" ")
 // console.log("Initial Chromosome : ")
@@ -178,60 +186,91 @@ function sorting(populasi,fitness,afterDecode){
 // console.log(" ")
 // console.log(chromosom)
 
-console.log(" ")
-console.log("Initial Populasi : ")
-let populasi = initialPopulasi(6)
-console.log(" ")
-console.log(populasi)
+// console.log(" ")
+// console.log("Initial Populasi : ")
+// let populasi = initialPopulasi(6)
+// console.log(" ")
+// console.log(populasi)
 
-console.log(" ")
-console.log("Setelah Docode : ")
-console.log(" ")
-let afterDecode = loopingPopulasi(populasi)
-console.log(" ")
-console.log("Populasi setelah di decode : ")
-console.log(" ")
-console.log(afterDecode)
+// console.log(" ")
+// console.log("Setelah Docode : ")
+// console.log(" ")
+// let afterDecode = loopingPopulasi(populasi)
+// console.log(" ")
+// console.log("Populasi setelah di decode : ")
+// console.log(" ")
+// console.log(afterDecode)
 
-console.log("Fitness")
-console.log(" ")
-let Fitness = fitness(afterDecode)
-console.log(Fitness)
-let min = nilaiMin(Fitness)
-// console.log("min : "+min);
-console.log(" ")
-console.log("Index Populasi :  ")
-console.log(" ")
-let roulette1 = RouletteWheelSelection(Fitness)
-let roulette2 = RouletteWheelSelection(Fitness)
-console.log(roulette1,roulette2)
+// console.log("Fitness")
+// console.log(" ")
+// let Fitness = fitness(afterDecode)
+// console.log(Fitness)
+// let min = nilaiMin(Fitness)
+// // console.log("min : "+min);
+// console.log(" ")
+// console.log("Index Populasi :  ")
+// console.log(" ")
+// let roulette1 = RouletteWheelSelection(Fitness)
+// let roulette2 = RouletteWheelSelection(Fitness)
+// console.log(roulette1,roulette2)
 
-console.log(" ")
-console.log("Populasi dari index yang di dapat :  ")
-console.log(" ")
-console.log(populasi[roulette1])
-console.log(populasi[roulette2])
+// console.log(" ")
+// console.log("Populasi dari index yang di dapat :  ")
+// console.log(" ")
+// console.log(populasi[roulette1])
+// console.log(populasi[roulette2])
 
-console.log(" ")
-let child = crossOVer(populasi[roulette1],populasi[roulette2],0.5)
-console.log(child)
+// console.log(" ")
+// let child = crossOVer(populasi[roulette1],populasi[roulette2],0.5)
+// console.log(child)
 
-console.log(" ")
-console.log("Hasil mutasi : ")
-let childMutation = mutation(child[0],child[1],0.5)
-console.log(childMutation)
+// console.log(" ")
+// console.log("Hasil mutasi : ")
+// let childMutation = mutation(child[0],child[1],0.5)
+// console.log(childMutation)
 
-Fitness = fitness(afterDecode) //untuk mendapata fitnss awal
-console.log("Hasil concat : ")
-sorting(populasi,Fitness,afterDecode)
+// Fitness = fitness(afterDecode) //untuk mendapata fitnss awal
+// console.log("Hasil concat : ")
+// let Sorting = sorting(populasi,Fitness,afterDecode)
+// console.log(Sorting)
 
+// console.log(" ")
+// console.log("Hasil replacement : ")
+// let Replacement = replacement(childMutation[0],childMutation[1],Sorting)
+// console.log(Replacement)
 
 
 
 
 
 const main = () =>{
+  let populasi  = initialPopulasi(6)
 
+  for(let i = 1 ; i <= 50 ; i++){
+    console.log("Individu ke - " + i)
+    console.log(" ")
+    let afterDecode = loopingPopulasi(populasi)
+    let Fitness = fitness(afterDecode)
+    let roulette1 = RouletteWheelSelection(Fitness)
+    let roulette2 = RouletteWheelSelection(Fitness)
+    let child = crossOVer(populasi[roulette1],populasi[roulette2],0.5)
+    let childMutation = mutation(child[0],child[1],0.5)
+    let Sorting = sorting(populasi,Fitness,afterDecode)
+    // console.log(Sorting)
+    // console.log(Sorting[5][0])
+    // console.log(Sorting[5][1])
+    // console.log(Sorting[5][2])
+    let Replacement = replacement(childMutation[0],childMutation[1],Sorting)
+    // console.log("Setelah replacement")
+    populasi = Replacement
+    let newPopulasi = []
+    for(let i = 0 ; i < 6 ; i++){
+      newPopulasi.push(Replacement[i][0])
+    }
+    // console.log("NEW POPULASI")
+    console.log(newPopulasi)
+    populasi = newPopulasi
+  }
 }
 
 main();
