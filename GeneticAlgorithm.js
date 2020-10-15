@@ -51,13 +51,13 @@ function loopingPopulasi(n){ //push angka yang sudah dicode ke dalam populasi
 }
 
 function fungsiH(x1,x2){
-  return (Math.cos(x1)*Math.sin(x2)) - (x1/(Math.pow(x2,2) + 1))
+  return ((Math.cos(x1*Math.PI/180))*(Math.sin(x2*Math.PI/180))) - (x1/(Math.pow(x2,2) + 1))
 }
 
 function fitness(n){
   let f = []
   for(let i = 0 ; i < n.length ; i++){
-    temp = 1 / (fungsiH(n[i][0],n[i][1]) + 0.01)
+    temp = -(fungsiH(n[i][0],n[i][1]))
     f.push(temp)
   }
   return f
@@ -251,23 +251,22 @@ const main = () =>{
     console.log(" ")
     let afterDecode = loopingPopulasi(populasi)
     let Fitness = fitness(afterDecode)
+    console.log(Fitness)
     let roulette1 = RouletteWheelSelection(Fitness)
     let roulette2 = RouletteWheelSelection(Fitness)
     let child = crossOVer(populasi[roulette1],populasi[roulette2],0.5)
     let childMutation = mutation(child[0],child[1],0.5)
+    Fitness = fitness(afterDecode) // tujuannya mengemablikan nilai fitness ke awal
     let Sorting = sorting(populasi,Fitness,afterDecode)
-    // console.log(Sorting)
-    // console.log(Sorting[5][0])
-    // console.log(Sorting[5][1])
-    // console.log(Sorting[5][2])
+    console.log("Chromosom Terbaik : " + Sorting[5][0])
+    console.log("Fitness Terbaik : " + Sorting[5][1])
+    console.log("Fenotipe Terbaik : "+Sorting[5][2])
     let Replacement = replacement(childMutation[0],childMutation[1],Sorting)
-    // console.log("Setelah replacement")
     populasi = Replacement
     let newPopulasi = []
     for(let i = 0 ; i < 6 ; i++){
       newPopulasi.push(Replacement[i][0])
     }
-    // console.log("NEW POPULASI")
     console.log(newPopulasi)
     populasi = newPopulasi
   }
