@@ -1,7 +1,7 @@
 function initialChromosom(x){ //pembentukan cromosom random memiliki 6 array
 	let chromosom = [];
 	for(let i = 0; i < x; i++){
-		chromosom.push(Math.round(Math.random(x)))
+		chromosom.push(Math.round(Math.random()))
   }
   return chromosom;
 }
@@ -51,7 +51,7 @@ function loopingPopulasi(n){ //push angka yang sudah dicode ke dalam populasi
 }
 
 function fungsiH(x1,x2){
-  return ((Math.cos(x1*Math.PI/180))*(Math.sin(x2*Math.PI/180))) - (x1/(Math.pow(x2,2) + 1))
+  return ((Math.cos(x1))*(Math.sin(x2))) - (x1/(Math.pow(x2,2) + 1))
 }
 
 function fitness(n){
